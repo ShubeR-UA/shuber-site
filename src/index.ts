@@ -520,7 +520,13 @@ async function handleApi(request: Request, env: Env): Promise<Response> {
     if (!request.body) return error("file body required", 400);
 
     const prefix = type === "audio" ? "audio" : "covers";
-    const key = `media/${prefix}/track-${id}${ext}`;
+    const previousPath = type === "audio" ? track.audio_path : track.cover_path;
+    if (previousPath) {
+      const previousKey = String(previousPath).replace(/^\//, "").split(/[?#]/, 1)[0];
+      if (previousKey) await env.MEDIA_BUCKET.delete(previousKey);
+    }
+    const version = Date.now();
+    const key = `media/${prefix}/track-${id}-${version}${ext}`;
     await env.MEDIA_BUCKET.put(key, request.body, {
       httpMetadata: {
         contentType: contentTypeForExt(ext),
