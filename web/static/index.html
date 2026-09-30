@@ -5,7 +5,7 @@
   <meta name="theme-color" content="#07070a"><title>ShubeR</title><link rel="icon" type="image/png" href="/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/style.css?v=vinyl5">
+  <link rel="stylesheet" href="/style.css?v=vinyl6">
 </head>
 <body>
 <div class="noise"></div>
@@ -19,4 +19,4 @@
 </main><footer><span>ShubeR © 2026</span><span>built for sound</span></footer>
 <div class="modal hidden" id="authModal"><div class="modal-backdrop" data-close></div><div class="modal-card"><button class="close" data-close>×</button><span class="kicker">ACCOUNT / AUTH</span><h2 id="authTitle">Вход</h2><p class="modal-sub">Сессия хранится на сервере. Браузер получает только HttpOnly cookie.</p><input id="login" autocomplete="username" placeholder="Логин"><input id="password" autocomplete="current-password" type="password" placeholder="Пароль"><button class="primary wide" id="authSubmit">Войти <span>↗</span></button><button class="text-btn" id="authToggle">Создать аккаунт</button><button class="text-btn hidden" id="logoutBtn">Выйти</button><div class="auth-status" id="authStatus"></div></div></div>
 <div class="modal hidden" id="adminModal"><div class="modal-backdrop" data-admin-close></div><div class="modal-card admin-card"><button class="close" data-admin-close>×</button><span class="kicker">ADMIN / MUSIC CMS</span><h2>Треки</h2><p class="modal-sub">Добавляй MP3, OGG, WAV и обложку. Файлы сохраняются в <code>/media</code>.</p><form id="trackForm" class="track-form"><input name="id" placeholder="ID, например 07"><input name="title" placeholder="Название" required><input name="subtitle" placeholder="Подзаголовок"><input name="bpm" type="number" placeholder="BPM"><input name="mood" placeholder="Mood"><label>Аудио<input name="audio" type="file" accept=".mp3,.ogg,.wav,.m4a"></label><label>Обложка<input name="cover" type="file" accept=".png,.jpg,.jpeg,.webp"></label><button class="primary wide" type="submit">Добавить трек <span>↗</span></button></form><div id="adminStatus" class="auth-status"></div><div id="adminTracks" class="admin-list"></div></div></div>
-<script src="/app.js?v=vinyl5"></script></body></html>
+<script src="/app.js?v=vinyl6"></script></body></html>
