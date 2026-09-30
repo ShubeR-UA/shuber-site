@@ -1,5 +1,7 @@
 # ShubeR Site · Cloudflare Workers Free
 
+Deployment target: Cloudflare Workers Free + R2.
+
 This version does **not** use Cloudflare Containers or Durable Objects.
 
 ## Architecture
