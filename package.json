@@ -1,5 +1,5 @@
 {
-  "name": "shuber-site-cloudflare",
+  "name": "shuber-site-cloudflare-free",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,11 +8,9 @@
     "types": "wrangler types",
     "cf-check": "wrangler deploy --dry-run"
   },
-  "dependencies": {
-    "@cloudflare/containers": "0.3.7"
-  },
   "devDependencies": {
-    "wrangler": "4.143.0",
-    "typescript": "^5.7.3"
+    "@cloudflare/workers-types": "^4.20260930.0",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.143.0"
   }
 }
