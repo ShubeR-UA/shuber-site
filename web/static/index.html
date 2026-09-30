@@ -6,6 +6,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css?v=vinyl6">
+  <style>
+    @media(max-width:800px){
+      .player{min-height:420px;padding-bottom:72px;position:relative}
+      .player-title{position:absolute;left:12px;bottom:62px;width:44%;max-width:44%;padding:0;text-align:left;z-index:7}
+      .player-title::before{text-align:left}
+      .volume-row{position:absolute;right:12px;bottom:62px;width:44%;max-width:44%;justify-content:flex-end;gap:6px;z-index:7}
+      .volume-row .volume-icon{flex:0 0 auto}
+      .volume-row .volume{width:calc(100% - 24px);max-width:none}
+      .volume-row>span:last-child{display:none}
+      .player-controls{bottom:10px;z-index:8}
+    }
+  </style>
 </head>
 <body>
 <div class="noise"></div>
