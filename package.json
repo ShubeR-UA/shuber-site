@@ -5,11 +5,9 @@
   "scripts": {
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
-    "types": "wrangler types",
     "cf-check": "wrangler deploy --dry-run"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260930.0",
     "typescript": "^5.9.3",
     "wrangler": "^4.143.0"
   }
