@@ -5,7 +5,7 @@ function showPlayerNotice(message='Вставьте пластинку'){if(!pla
 let currentTrack=null, tracks=[], authMode='login';
 let audioCtx=null, analyser=null, sourceNode=null, waveFrame=0;
 const START_VOLUME=.30;
-function setVolume(value){const v=Math.max(0,Math.min(1,Number(value)||0));audio.volume=v;if(volumeBar)volumeBar.value=Math.round(v*100);if(volumeValue)volumeValue.textContent=Math.round(v*100)+'%'}
+function setVolume(value){const v=Math.max(0,Math.min(1,Number(value)||0));const pct=Math.round(v*100);audio.volume=v;if(volumeBar){volumeBar.value=pct;volumeBar.style.setProperty('--volume-level',pct+'%')}if(volumeValue)volumeValue.textContent=pct+'%'}
 setVolume(START_VOLUME);
 const waveCanvas=$('#audioWave'), waveCtx=waveCanvas?.getContext('2d');
 function initAudioVisualizer(){if(!audio||!waveCtx)return;if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)();analyser=audioCtx.createAnalyser();analyser.fftSize=128;analyser.smoothingTimeConstant=.78;sourceNode=audioCtx.createMediaElementSource(audio);sourceNode.connect(analyser);analyser.connect(audioCtx.destination);resizeWave();drawWave()}else if(audioCtx.state==='suspended')audioCtx.resume()}
