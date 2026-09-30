@@ -1,0 +1,60 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "shuber-site",
+  "main": "./src/index.ts",
+  "compatibility_date": "2026-09-29",
+  "workers_dev": true,
+  "observability": {
+    "enabled": true
+  },
+
+  "containers": [
+    {
+      "class_name": "ShubeRContainer",
+      "image": "./Dockerfile.cloudflare",
+      "instance_type": "basic",
+      "max_instances": 1
+    }
+  ],
+
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SHUBER_CONTAINER",
+        "class_name": "ShubeRContainer"
+      }
+    ]
+  },
+
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["ShubeRContainer"]
+    }
+  ],
+
+  "exports": {
+    "ShubeRContainer": {
+      "type": "durable-object",
+      "storage": "sqlite"
+    }
+  },
+
+  "r2_buckets": [
+    {
+      "binding": "MEDIA_BUCKET",
+      "bucket_name": "shuber-media"
+    }
+  ],
+
+  "vars": {
+    "APP_ENV": "production",
+    "STORAGE_BACKEND": "r2",
+    "R2_INTERNAL_URL": "http://r2.internal",
+    "DATA_KEY": "data/shuber.json",
+    "COOKIE_SECURE": "true",
+    "SESSION_TTL": "168h",
+    "MAX_UPLOAD_BYTES": "94371840",
+    "SHUBER_ADMIN_LOGIN": "admin"
+  }
+}
