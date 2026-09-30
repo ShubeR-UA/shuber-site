@@ -1,5 +1,3 @@
-import type { ExecutionContext } from "@cloudflare/workers-types";
-
 interface R2Binding {
   get(key: string, options?: any): Promise<any>;
   head(key: string): Promise<any>;
@@ -581,7 +579,7 @@ async function handleApi(request: Request, env: Env): Promise<Response> {
 }
 
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: Env): Promise<Response> {
     try {
       const url = new URL(request.url);
 
