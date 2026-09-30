@@ -1,8 +1,15 @@
 import type { ExecutionContext } from "@cloudflare/workers-types";
 
+interface R2Binding {
+  get(key: string, options?: any): Promise<any>;
+  head(key: string): Promise<any>;
+  put(key: string, value: any, options?: any): Promise<any>;
+  delete(key: string): Promise<void>;
+}
+
 interface Env {
-  ASSETS: Fetcher;
-  MEDIA_BUCKET: R2Bucket;
+  ASSETS: { fetch(request: Request): Promise<Response> };
+  MEDIA_BUCKET: R2Binding;
   DATA_KEY?: string;
   COOKIE_SECURE?: string;
   SESSION_TTL_SECONDS?: string;
@@ -497,7 +504,7 @@ async function handleApi(request: Request, env: Env): Promise<Response> {
     const data = await loadData(env);
     const track = data.tracks[id];
     if (!track) return error("track not found", 404);
-    const filename = request.headers.get("X-Filename") || "";
+    const filename = url.searchParams.get("filename") || request.headers.get("X-Filename") || "";
     const ext = extFromFilename(filename);
     const allowed = type === "audio" ? AUDIO_EXT : COVER_EXT;
     if (!allowed.has(ext)) return error("unsupported file type", 400);
