@@ -7,7 +7,6 @@
   "observability": {
     "enabled": true
   },
-
   "containers": [
     {
       "class_name": "ShubeRContainer",
@@ -16,7 +15,6 @@
       "max_instances": 1
     }
   ],
-
   "durable_objects": {
     "bindings": [
       {
@@ -25,28 +23,18 @@
       }
     ]
   },
-
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_sqlite_classes": ["ShubeRContainer"]
-    }
-  ],
-
   "exports": {
     "ShubeRContainer": {
       "type": "durable-object",
       "storage": "sqlite"
     }
   },
-
   "r2_buckets": [
     {
       "binding": "MEDIA_BUCKET",
       "bucket_name": "shuber-media"
     }
   ],
-
   "vars": {
     "APP_ENV": "production",
     "STORAGE_BACKEND": "r2",
