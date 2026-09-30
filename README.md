@@ -1,185 +1,67 @@
-# ShubeR Site · Cloudflare Containers + R2
+# ShubeR Site · Cloudflare Workers Free
 
-Cloudflare-ready production starter for the ShubeR music site.
-
-## Stack
-
-- Go application inside a Cloudflare Container
-- Cloudflare Worker as the public edge entrypoint
-- Cloudflare R2 for site metadata, audio files and cover images
-- Durable Object binding required by Cloudflare Containers
-- server-side sessions with HttpOnly cookie
-- role-based admin CMS
-- direct R2 media delivery with byte-range support for the HTML5 player
-- rate limiting for login/register
-- same-origin protection for state-changing requests
-- security headers + HSTS in production
-- Workers observability enabled
+This version does **not** use Cloudflare Containers or Durable Objects.
 
 ## Architecture
 
-```text
-Browser
-   |
-   v
-Cloudflare Worker
-   |
-   +---- /media/* ----> R2
-   |
-   +---- everything else ----> ShubeRContainer (Go)
-                                      |
-                                      +---- private http://r2.internal ----> R2
-```
+- Cloudflare Workers Free: API + authentication
+- Workers Assets: HTML/CSS/JS
+- R2: music files, covers and small site data
+- Signed HttpOnly session cookie
 
-The Go container does not receive R2 API credentials. The Worker uses `outboundByHost` to expose a private virtual host to the container and performs the R2 operation through its R2 binding. Cloudflare documents this pattern for connecting Containers to R2 without an SDK inside the container.
+Cloudflare Workers Free currently includes 100,000 requests/day. Static assets are served without Workers request charges, while R2 Standard currently includes 10 GB-month, 1M Class A operations, 10M Class B operations, and free egress each month. See Cloudflare pricing/limits docs before production use.
 
-The current JSON metadata/session store is kept in `data/shuber.json` inside R2 and the container is intentionally limited to one instance. That keeps the existing starter architecture simple and consistent. For a multi-instance public platform, migrate users/sessions/metadata to D1 or another transactional database while keeping R2 for media.
+## Cloudflare setup
 
-## What you need
+### 1. R2
 
-- Cloudflare account
-- Workers Paid plan because Containers are available on Workers Paid
-- Node.js supported by the current Wrangler release
-- Docker for `wrangler deploy` from your own machine when the Container image is built from `Dockerfile.cloudflare`
-- an R2 bucket
+Create a Standard bucket:
 
-## Fast deployment from your computer
+`shuber-media`
 
-### 1. Create R2
+Keep public access disabled.
 
-```bash
-npx wrangler login
-npx wrangler r2 bucket create shuber-media
-```
+### 2. Worker secrets
 
-If you create the bucket manually in Dashboard > R2, keep the name `shuber-media` or change `bucket_name` in `wrangler.jsonc`.
+In the Worker dashboard add these encrypted secrets:
 
-### 2. Install dependencies
+- `SHUBER_ADMIN_PASSWORD` — password for the admin login
+- `SESSION_SECRET` — long random secret used to sign session cookies
 
-```bash
-npm install
-```
+Do not commit either secret to GitHub.
 
-### 3. Set the admin password as a secret
+### 3. Build settings
 
-```bash
-npx wrangler secret put SHUBER_ADMIN_PASSWORD
-```
+- Build command: empty
+- Deploy command: `npx wrangler deploy`
+- Root directory: `/`
 
-The default admin login is `admin`. Change `SHUBER_ADMIN_LOGIN` in `wrangler.jsonc` before deployment if needed.
+### 4. GitHub
 
-### 4. Deploy
+Pushes to `main` can trigger the Cloudflare build configured for this repository.
 
-```bash
-npm run deploy
-```
+## Admin
 
-The current Wrangler configuration points the Container image at `Dockerfile.cloudflare`, so a local Docker engine must be running when deploying from your machine.
+The default admin login is:
 
-After the first deploy, Cloudflare may need several minutes to provision the Container. You can check it with:
+`admin`
 
-```bash
-npx wrangler containers list
-npx wrangler containers images list
-```
+The password comes only from `SHUBER_ADMIN_PASSWORD`.
 
-### 5. Test the site
+After deployment:
 
-Open the `workers.dev` URL printed by Wrangler.
+1. Open the site.
+2. Click **Войти**.
+3. Login as `admin`.
+4. The admin music CMS appears.
+5. Add a track, then upload an audio file and a cover.
 
-Log in as the admin and open the account button to use the music CMS.
+Audio is uploaded directly through the Worker to R2. The Worker streams audio back with HTTP Range support, so the HTML5 player can seek normally.
 
-## Deploy through Cloudflare Dashboard + GitHub
+## Upload limits
 
-This is the better route if you want future deployments to happen automatically after a Git push.
+The application is configured for up to 90 MiB audio uploads and 10 MiB cover uploads. Cloudflare's current Workers Free request body limit is 100 MB, so larger audio files should later be moved to a multipart/direct-upload flow.
 
-1. Put this project in a GitHub repository.
-2. In Cloudflare Dashboard open **Workers & Pages**.
-3. Select **Create application** > **Get started** next to **Import a repository**.
-4. Select the GitHub repository.
-5. Use `npx wrangler deploy` as the production deploy command.
-6. Keep `wrangler.jsonc` and `Dockerfile.cloudflare` at the repository root.
-7. Add `SHUBER_ADMIN_PASSWORD` as a Worker secret in Cloudflare.
-8. Deploy the production branch.
+## Important
 
-Cloudflare Workers Builds supports Workers that use Containers when the production deploy command is `npx wrangler deploy`; the build environment can build the Dockerfile image for you.
-
-## Attach your domain
-
-After the Worker exists:
-
-**Workers & Pages > shuber-site > Settings > Domains & Routes > Add > Custom Domain**
-
-Enter something like `music.example.com`.
-
-Cloudflare will create the DNS record and certificate for the Worker Custom Domain.
-
-The Wrangler file deliberately keeps `workers_dev` enabled so the site is immediately testable. You can manage the final custom domain in the dashboard.
-
-## Using the CMS
-
-The public site has the existing ShubeR player and account UI.
-
-Admin flow:
-
-```text
-Account
-  -> sign in as admin
-  -> Admin / Music CMS
-  -> title / subtitle / BPM / mood
-  -> audio file
-  -> cover image
-  -> save
-```
-
-Files are stored in R2 under:
-
-```text
-data/shuber.json
-media/audio/...
-media/covers/...
-```
-
-The browser reads `/media/...` directly from R2 through the Worker, so the Go application is not used as the audio-file origin.
-
-## Local development
-
-Go-only:
-
-```bash
-go run ./cmd/server
-```
-
-Cloudflare Worker + Container:
-
-```bash
-npm run dev
-```
-
-The latter needs Docker for the local Container.
-
-## Configuration
-
-Important values in `wrangler.jsonc`:
-
-- `MEDIA_BUCKET`: R2 bucket binding
-- `STORAGE_BACKEND=r2`
-- `R2_INTERNAL_URL=http://r2.internal`
-- `DATA_KEY=data/shuber.json`
-- `COOKIE_SECURE=true`
-- `MAX_UPLOAD_BYTES=94371840` (90 MiB application-level default)
-- `SHUBER_ADMIN_LOGIN=admin`
-
-`SHUBER_ADMIN_PASSWORD` is intentionally not stored in the repository. Set it with `wrangler secret put`.
-
-Cloudflare account-level request body limits still apply to browser uploads, so very large audio files may require a higher zone/account upload limit.
-
-## Validation already performed
-
-The Go application passes:
-
-```text
-go test ./...
-```
-
-The Cloudflare files were prepared against the current Containers and R2 configuration documented by Cloudflare on September 30, 2026. A real Cloudflare deployment is not performed from this sandbox, so the final Docker image build and Cloudflare resource provisioning must be executed in your Cloudflare account.
+This repository also contains older Go source files from the previous Container version. They are not used by the current `wrangler.jsonc` deployment. The active production entry point is `src/index.ts`.
