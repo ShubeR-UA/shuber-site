@@ -152,10 +152,13 @@ async function hmacSha256(secret: string, value: string): Promise<Uint8Array> {
 }
 
 function timingEqual(a: Uint8Array, b: Uint8Array): boolean {
+  const subtle = crypto.subtle as SubtleCrypto & {
+    timingSafeEqual(a: ArrayBufferView, b: ArrayBufferView): boolean;
+  };
   if (a.length !== b.length) {
-    return !crypto.subtle.timingSafeEqual(a, a);
+    return !subtle.timingSafeEqual(a, a);
   }
-  return crypto.subtle.timingSafeEqual(a, b);
+  return subtle.timingSafeEqual(a, b);
 }
 
 async function passwordHash(password: string): Promise<string> {
@@ -507,10 +510,12 @@ async function handleApi(request: Request, env: Env): Promise<Response> {
     const allowed = type === "audio" ? AUDIO_EXT : COVER_EXT;
     if (!allowed.has(ext)) return error("unsupported file type", 400);
 
-    const size = Number(request.headers.get("Content-Length") || "0");
+    const sizeHeader = request.headers.get("Content-Length");
+    const size = sizeHeader ? Number(sizeHeader) : 0;
     const maxBytes = Math.max(1, Number(env.MAX_UPLOAD_BYTES || DEFAULT_MAX_UPLOAD));
-    if (!size || size > maxBytes || (type === "cover" && size > 10 * 1024 * 1024)) {
-      return error(`file too large (max ${Math.floor((type === "cover" ? Math.min(maxBytes, 10 * 1024 * 1024) : maxBytes) / 1024 / 1024)} MB)`, 413);
+    const effectiveMax = type === "cover" ? Math.min(maxBytes, 10 * 1024 * 1024) : maxBytes;
+    if (size && size > effectiveMax) {
+      return error(`file too large (max ${Math.floor(effectiveMax / 1024 / 1024)} MB)`, 413);
     }
     if (!request.body) return error("file body required", 400);
 
