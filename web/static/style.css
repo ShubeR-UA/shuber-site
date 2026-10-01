@@ -352,3 +352,25 @@
     font-size:7px;
   }
 }
+
+
+/* Mobile About final composition */
+@media(max-width:800px){
+  .about-section{padding:78px 18px 86px}
+  .about-title-row{gap:12px}
+  .about-title-row h2{font-size:43px;line-height:.94;letter-spacing:-2.6px}
+  .about-mark{font-size:52px;letter-spacing:-4px}
+  .about-line{margin-top:21px}
+  .about-content{grid-template-columns:1fr;gap:16px;margin-top:30px}
+  .about-manifesto,.about-system{width:100%;min-width:0;min-height:0;padding:23px 20px;border-radius:18px}
+  .about-manifesto>.about-system-label,.about-system .about-system-label{font-size:8px;line-height:1.35;letter-spacing:.14em}
+  .about-manifesto>p{margin:24px 0 0;font-size:22px;line-height:1.2;letter-spacing:-.6px;max-width:none}
+  .about-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px}
+  .about-tags span{width:auto;max-width:100%;padding:8px 9px;font-size:7px;line-height:1.2;letter-spacing:.12em;white-space:normal;overflow-wrap:anywhere}
+  .about-signature{margin-top:20px;font-size:7px;letter-spacing:.15em}
+  .about-system{display:grid;grid-template-columns:24px minmax(0,1fr);gap:12px}
+  .about-system-main{min-width:0;padding-right:0}
+  .about-quote{margin-top:20px!important;font-size:32px!important;line-height:.96!important;letter-spacing:-1.35px!important}
+  .about-description{margin-top:20px!important;max-width:none!important;font-size:12px!important;line-height:1.65!important}
+  .about-stamp{position:relative;right:auto;bottom:auto;margin-top:20px;width:52px;height:52px;font-size:7px}
+}
