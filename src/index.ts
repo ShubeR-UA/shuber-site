@@ -38,6 +38,7 @@ interface Track {
   listenTotal?: number;
   listenDays?: Record<string, number>;
   likeUserIds?: number[];
+  likeIpHashes?: string[];
 }
 
 interface SiteData {
@@ -287,6 +288,11 @@ function getIp(request: Request): string {
   return request.headers.get("CF-Connecting-IP") || "unknown";
 }
 
+async function likeIpKey(request: Request, env: Env): Promise<string> {
+  const ip = getIp(request);
+  return toBase64Url(await sha256(`shuber-like:${env.SESSION_SECRET}:${ip}`));
+}
+
 function extFromFilename(name: string): string {
   const dot = name.lastIndexOf(".");
   return dot >= 0 ? name.slice(dot).toLowerCase() : "";
@@ -324,8 +330,9 @@ function sortTracks(tracks: Record<string, Track>): Track[] {
   return Object.values(tracks).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
-function publicTrack(track: Track, identity: Identity | null = null) {
+function publicTrack(track: Track, likeKey: string | null = null) {
   const likeUserIds = Array.isArray(track.likeUserIds) ? track.likeUserIds : [];
+  const likeIpHashes = Array.isArray(track.likeIpHashes) ? track.likeIpHashes : [];
   return {
     id: track.id,
     title: track.title,
@@ -336,8 +343,8 @@ function publicTrack(track: Track, identity: Identity | null = null) {
     cover_path: track.cover_path,
     createdAt: track.createdAt,
     listen_count: Math.max(0, Number(track.listenTotal) || 0),
-    like_count: likeUserIds.length,
-    liked: identity ? likeUserIds.includes(identity.id) : false,
+    like_count: likeUserIds.length + likeIpHashes.length,
+    liked: likeKey ? likeIpHashes.includes(likeKey) : false,
   };
 }
 
@@ -435,8 +442,8 @@ async function handleApi(request: Request, env: Env): Promise<Response> {
 
   if (path === "/api/tracks" && method === "GET") {
     const data = await loadData(env);
-    const identity = await readSession(request, env);
-    return json({ tracks: sortTracks(data.tracks).map((track) => publicTrack(track, identity)) });
+    const likeKey = await likeIpKey(request, env);
+    return json({ tracks: sortTracks(data.tracks).map((track) => publicTrack(track, likeKey)) });
   }
 
   const trackActionMatch = path.match(/^\/api\/tracks\/([^/]+)\/(listen|like)$/);
@@ -457,21 +464,24 @@ async function handleApi(request: Request, env: Env): Promise<Response> {
       return json({ ok: true, listen_count: track.listenTotal || 0 });
     }
 
-    const identity = await readSession(request, env);
-    if (!identity) return error("login required", 401);
-    const likeUserIds = Array.isArray(track.likeUserIds) ? track.likeUserIds : [];
-    const index = likeUserIds.indexOf(identity.id);
-    if (index >= 0) {
-      likeUserIds.splice(index, 1);
-    } else {
-      likeUserIds.push(identity.id);
+    if (!allowAttempt(`like:${getIp(request)}:${id}`, 12, 60 * 1000)) {
+      return error("too many like actions", 429);
     }
-    track.likeUserIds = likeUserIds;
+    const likeKey = await likeIpKey(request, env);
+    const likeUserIds = Array.isArray(track.likeUserIds) ? track.likeUserIds : [];
+    const likeIpHashes = Array.isArray(track.likeIpHashes) ? track.likeIpHashes : [];
+    const index = likeIpHashes.indexOf(likeKey);
+    if (index >= 0) {
+      likeIpHashes.splice(index, 1);
+    } else {
+      likeIpHashes.push(likeKey);
+    }
+    track.likeIpHashes = likeIpHashes;
     await saveData(env, data);
     return json({
       ok: true,
-      liked: likeUserIds.includes(identity.id),
-      like_count: likeUserIds.length,
+      liked: likeIpHashes.includes(likeKey),
+      like_count: likeUserIds.length + likeIpHashes.length,
     });
   }
 
