@@ -276,3 +276,79 @@
     font-size:7px;
   }
 }
+
+@media(max-width:800px){
+  .about-manifesto,.about-system{
+    padding:24px 20px;
+    overflow:hidden;
+  }
+  .about-manifesto>.about-system-label,
+  .about-system .about-system-label{
+    font-size:8px;
+    line-height:1.35;
+    letter-spacing:.13em;
+    white-space:normal;
+    overflow-wrap:anywhere;
+  }
+  .about-manifesto>p{
+    margin-top:25px;
+    font-size:22px;
+    line-height:1.18;
+    letter-spacing:-.65px;
+    overflow-wrap:anywhere;
+  }
+  .about-tags{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:7px;
+    margin-top:19px;
+  }
+  .about-tags span{
+    display:block;
+    width:100%;
+    padding:9px 10px;
+    font-size:7px;
+    line-height:1.2;
+    letter-spacing:.14em;
+    white-space:normal;
+    overflow-wrap:anywhere;
+  }
+  .about-signature{
+    margin-top:20px;
+    font-size:7px;
+    letter-spacing:.16em;
+    white-space:normal;
+  }
+  .about-system{
+    display:grid;
+    grid-template-columns:24px minmax(0,1fr);
+    gap:13px;
+  }
+  .about-system-main{
+    min-width:0;
+    width:100%;
+    padding-right:0;
+  }
+  .about-quote{
+    margin-top:20px!important;
+    font-size:32px!important;
+    line-height:.96!important;
+    letter-spacing:-1.4px!important;
+  }
+  .about-description{
+    margin-top:20px!important;
+    max-width:100%!important;
+    font-size:12px!important;
+    line-height:1.6!important;
+    overflow-wrap:anywhere;
+  }
+  .about-stamp{
+    position:relative;
+    right:auto;
+    bottom:auto;
+    margin-top:22px;
+    width:52px;
+    height:52px;
+    font-size:7px;
+  }
+}
