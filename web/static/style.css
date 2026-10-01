@@ -23,3 +23,30 @@
 .hero-code{right:0;bottom:24px;color:#77737e}
 .hero-scan{position:absolute;left:2px;top:22px;color:#4f4c56;font:800 8px/1 ui-monospace;letter-spacing:.16em;writing-mode:vertical-rl;transform:rotate(180deg)}
 @media(max-width:800px){.hero{padding-top:42px;padding-bottom:70px;gap:18px}.hero-kicker{font-size:8px;letter-spacing:.11em}.hero h1{font-size:clamp(48px,13vw,68px);letter-spacing:-3.2px;line-height:.92;margin-top:17px}.hero h1 em{max-width:100%}.hero-copy>p{font-size:14px;line-height:1.7;margin-top:22px}.hero-actions{margin-top:24px}.hero-art{height:360px}.hero-vinyl{width:290px;height:290px;right:10px;top:28px}.record-label{width:90px;height:90px;left:100px;top:100px}.record-hole{left:140px;top:140px}.hero-sticker{left:4px;bottom:46px}.hero-code{right:4px;bottom:8px}.hero-scan{left:0;top:12px}}
+
+/* ShubeR About signature styling */
+.about-manifesto,.about-system{transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease}
+.about-manifesto:hover,.about-system:hover{transform:translateY(-4px);border-color:#484550;box-shadow:0 22px 55px #0009}
+.about-manifesto{background:radial-gradient(circle at 92% 8%,#ff365d12,transparent 32%),linear-gradient(145deg,#15151d,#09090e)}
+.about-system{background:radial-gradient(circle at 10% 90%,#d9ff4a0b,transparent 34%),linear-gradient(145deg,#0e0e15,#15131c)}
+.about-manifesto .about-number,.about-system .about-number{font-size:11px;letter-spacing:.2em;text-shadow:0 0 12px #ff365d66}
+.about-manifesto>.about-system-label,.about-system-label{font-family:'Space Grotesk',Inter,sans-serif;font-size:9px;letter-spacing:.2em;color:#9b98a3}
+.about-manifesto>p{font-family:'Space Grotesk',Inter,sans-serif;font-weight:600}
+.about-manifesto>p b{font-weight:700;color:#fff;text-shadow:0 0 18px #ffffff12}
+.about-tags span{font-family:'Space Grotesk',Inter,sans-serif;font-size:8px;letter-spacing:.16em;border-radius:3px}
+.about-signature{display:block;margin-top:30px;color:#55525d;font:800 9px/1 ui-monospace,monospace;letter-spacing:.24em}
+.about-system-main{position:relative;min-width:0;flex:1;padding-right:76px}
+.about-system .about-system-label{color:#b0adb7}
+.about-quote{margin:22px 0 0!important;max-width:none!important;font:700 clamp(28px,3.1vw,44px)/.98 'Space Grotesk',Inter,sans-serif!important;letter-spacing:-1.8px!important;color:#f2eff5!important}
+.about-quote em{font-style:normal;color:#77737f;text-shadow:0 0 22px #ff365d12}
+.about-description{margin:20px 0 0!important;max-width:390px!important;color:#aaa7b1!important;font:500 14px/1.7 Inter,sans-serif!important}
+.about-stamp{position:absolute;right:0;bottom:0;width:62px;height:62px;border:1px solid #ff365d55;border-radius:50%;display:grid;place-items:center;text-align:center;color:#ff6b84;font:900 8px/.95 'Space Grotesk',sans-serif;letter-spacing:.12em;transform:rotate(-10deg);box-shadow:0 0 22px #ff365d10}
+@media(max-width:800px){
+  .about-manifesto,.about-system{transform:none}
+  .about-manifesto:hover,.about-system:hover{transform:none}
+  .about-system-main{padding-right:66px}
+  .about-quote{font-size:32px!important;letter-spacing:-1.2px!important}
+  .about-description{font-size:13px!important}
+  .about-signature{margin-top:24px}
+  .about-stamp{width:56px;height:56px;font-size:7px}
+}
