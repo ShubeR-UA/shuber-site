@@ -8,14 +8,14 @@
   <link rel="stylesheet" href="/style.css?v=vinyl6">
   <style>
     @media(max-width:800px){
-      .player{min-height:420px;padding-bottom:72px;position:relative}
-      .player-title{position:absolute;left:12px;bottom:62px;width:44%;max-width:44%;padding:0;text-align:left;z-index:7}
-      .player-title::before{text-align:left}
-      .volume-row{position:absolute;right:12px;bottom:62px;width:44%;max-width:44%;justify-content:flex-end;gap:6px;z-index:7}
+      .player{min-height:500px;padding-bottom:14px}
+      .player-title{position:relative;left:auto;bottom:auto;width:100%;max-width:100%;padding:0;text-align:center;z-index:7}
+      .player-title::before{text-align:center}
+      .volume-row{position:relative;right:auto;bottom:auto;width:min(280px,90%);max-width:100%;justify-content:center;gap:8px;z-index:7;margin-left:auto;margin-right:auto}
       .volume-row .volume-icon{flex:0 0 auto}
-      .volume-row .volume{width:calc(100% - 24px);max-width:none}
-      .volume-row>span:last-child{display:none}
-      .player-controls{bottom:10px;z-index:8}
+      .volume-row .volume{width:min(210px,70vw);max-width:100%}
+      .volume-row>span:last-child{display:inline;min-width:34px}
+      .player-controls{position:relative;left:0;bottom:auto;transform:none;z-index:8}
     }
   </style>
 </head>
