@@ -35,6 +35,9 @@ interface Track {
   audio_path?: string;
   cover_path?: string;
   createdAt: string;
+  listenTotal?: number;
+  listenDays?: Record<string, number>;
+  likeUserIds?: number[];
 }
 
 interface SiteData {
@@ -321,6 +324,41 @@ function sortTracks(tracks: Record<string, Track>): Track[] {
   return Object.values(tracks).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
+function publicTrack(track: Track, identity: Identity | null = null) {
+  const likeUserIds = Array.isArray(track.likeUserIds) ? track.likeUserIds : [];
+  return {
+    id: track.id,
+    title: track.title,
+    subtitle: track.subtitle,
+    bpm: track.bpm,
+    mood: track.mood,
+    audio_path: track.audio_path,
+    cover_path: track.cover_path,
+    createdAt: track.createdAt,
+    listen_count: Math.max(0, Number(track.listenTotal) || 0),
+    like_count: likeUserIds.length,
+    liked: identity ? likeUserIds.includes(identity.id) : false,
+  };
+}
+
+function dateKey(date = new Date()): string {
+  return date.toISOString().slice(0, 10);
+}
+
+function addListen(track: Track): void {
+  track.listenTotal = Math.max(0, Number(track.listenTotal) || 0) + 1;
+  const days = track.listenDays && typeof track.listenDays === "object" ? track.listenDays : {};
+  const today = dateKey();
+  days[today] = Math.max(0, Number(days[today]) || 0) + 1;
+  const cutoff = new Date();
+  cutoff.setUTCDate(cutoff.getUTCDate() - 8);
+  const cutoffKey = dateKey(cutoff);
+  for (const key of Object.keys(days)) {
+    if (key < cutoffKey) delete days[key];
+  }
+  track.listenDays = days;
+}
+
 function parseRange(value: string | null, size: number): { offset: number; length: number; start: number; end: number } | null {
   if (!value || !/^bytes=\d*-\d*$/.test(value.trim()) || size <= 0) return null;
   const [startRaw, endRaw] = value.trim().slice(6).split("-");
@@ -397,7 +435,66 @@ async function handleApi(request: Request, env: Env): Promise<Response> {
 
   if (path === "/api/tracks" && method === "GET") {
     const data = await loadData(env);
-    return json({ tracks: sortTracks(data.tracks) });
+    const identity = await readSession(request, env);
+    return json({ tracks: sortTracks(data.tracks).map((track) => publicTrack(track, identity)) });
+  }
+
+  const trackActionMatch = path.match(/^\/api\/tracks\/([^/]+)\/(listen|like)$/);
+  if (trackActionMatch && method === "POST") {
+    let id = "";
+    try { id = safeTrackId(decodeURIComponent(trackActionMatch[1])); } catch { return error("invalid track id", 400); }
+    const data = await loadData(env);
+    const track = data.tracks[id];
+    if (!track) return error("track not found", 404);
+    const action = trackActionMatch[2];
+
+    if (action === "listen") {
+      if (!allowAttempt(`listen:${getIp(request)}:${id}`, 4, 60 * 1000)) {
+        return error("too many listens", 429);
+      }
+      addListen(track);
+      await saveData(env, data);
+      return json({ ok: true, listen_count: track.listenTotal || 0 });
+    }
+
+    const identity = await readSession(request, env);
+    if (!identity) return error("login required", 401);
+    const likeUserIds = Array.isArray(track.likeUserIds) ? track.likeUserIds : [];
+    const index = likeUserIds.indexOf(identity.id);
+    if (index >= 0) {
+      likeUserIds.splice(index, 1);
+    } else {
+      likeUserIds.push(identity.id);
+    }
+    track.likeUserIds = likeUserIds;
+    await saveData(env, data);
+    return json({
+      ok: true,
+      liked: likeUserIds.includes(identity.id),
+      like_count: likeUserIds.length,
+    });
+  }
+
+  if (path === "/api/stats" && method === "GET") {
+    const data = await loadData(env);
+    const today = dateKey();
+    const weekKeys = new Set<string>();
+    for (let i = 0; i < 7; i++) {
+      const d = new Date();
+      d.setUTCDate(d.getUTCDate() - i);
+      weekKeys.add(dateKey(d));
+    }
+    const allTracks = sortTracks(data.tracks);
+    const todayCount = allTracks.reduce((sum, track) => sum + (Number(track.listenDays?.[today]) || 0), 0);
+    const weekCount = allTracks.reduce((sum, track) => {
+      return sum + [...weekKeys].reduce((trackSum, key) => trackSum + (Number(track.listenDays?.[key]) || 0), 0);
+    }, 0);
+    const totalCount = allTracks.reduce((sum, track) => sum + (Number(track.listenTotal) || 0), 0);
+    const top = [...allTracks]
+      .sort((a, b) => (Number(b.listenTotal) || 0) - (Number(a.listenTotal) || 0))
+      .slice(0, 5)
+      .map((track) => ({ id: track.id, title: track.title, listen_count: Number(track.listenTotal) || 0 }));
+    return json({ today: todayCount, week: weekCount, total: totalCount, top });
   }
 
   if (path === "/api/me" && method === "GET") {
