@@ -50,3 +50,229 @@
   .about-signature{margin-top:24px}
   .about-stamp{width:56px;height:56px;font-size:7px}
 }
+
+/* About unified ShubeR typography */
+.about-section{
+  padding-top:104px;
+}
+.about-head .kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  font:800 10px/1 'Space Grotesk',Inter,sans-serif;
+  letter-spacing:.2em;
+  color:var(--hot);
+}
+.about-head .kicker::before{
+  content:"";
+  width:24px;
+  height:1px;
+  background:var(--hot);
+  box-shadow:0 0 12px #ff365d88;
+}
+.about-title-row{
+  align-items:flex-end;
+}
+.about-title-row h2{
+  font:700 clamp(48px,6.2vw,78px)/.9 'Space Grotesk',Inter,sans-serif;
+  letter-spacing:-4px;
+  margin:18px 0 0;
+}
+.about-title-row h2 em{
+  display:inline-block;
+  color:#77737e;
+  font-style:normal;
+  font-weight:600;
+}
+.about-mark{
+  font:700 clamp(64px,8vw,104px)/.72 'Space Grotesk',Inter,sans-serif;
+  letter-spacing:-7px;
+  color:#17161d;
+  text-shadow:1px 1px 0 #3c3944,-1px -1px 0 #08080b;
+}
+.about-line{
+  margin-top:26px;
+  font:800 8px/1 'Space Grotesk',Inter,sans-serif;
+  letter-spacing:.22em;
+  color:#5e5b66;
+}
+.about-line i{
+  width:48px;
+}
+.about-content{
+  margin-top:42px;
+  grid-template-columns:1.12fr .88fr;
+  gap:16px;
+}
+.about-manifesto,.about-system{
+  min-height:260px;
+  border-radius:20px;
+  border-color:#2e2c36;
+  padding:27px 29px;
+}
+.about-manifesto{
+  background:
+    linear-gradient(135deg,#17161e 0%,#0d0d12 68%),
+    radial-gradient(circle at 92% 8%,#ff365d12,transparent 35%);
+}
+.about-system{
+  gap:20px;
+  background:
+    linear-gradient(135deg,#111118 0%,#15131b 72%),
+    radial-gradient(circle at 10% 90%,#d9ff4a0b,transparent 35%);
+}
+.about-number{
+  min-width:24px;
+  color:var(--hot);
+  font:800 9px/1 ui-monospace,monospace;
+  letter-spacing:.2em;
+}
+.about-manifesto>.about-system-label,
+.about-system .about-system-label{
+  margin-top:1px;
+  font:800 9px/1 'Space Grotesk',Inter,sans-serif;
+  letter-spacing:.19em;
+  color:#8f8c97;
+}
+.about-manifesto>p{
+  margin-top:38px;
+  max-width:680px;
+  color:#eeeaf1;
+  font:600 clamp(22px,2.25vw,30px)/1.18 'Space Grotesk',Inter,sans-serif;
+  letter-spacing:-.8px;
+}
+.about-manifesto>p b{
+  color:#fff;
+  font-weight:700;
+}
+.about-tags{
+  margin-top:27px;
+  gap:7px;
+}
+.about-tags span{
+  padding:8px 10px;
+  border:1px solid #34323c;
+  border-left:2px solid var(--hot);
+  border-radius:4px;
+  background:#0b0b10;
+  color:#aaa7b1;
+  font:800 8px/1 'Space Grotesk',Inter,sans-serif;
+  letter-spacing:.16em;
+}
+.about-tags span:nth-child(2){
+  border-left-color:#8b5cf6;
+}
+.about-tags span:nth-child(3){
+  border-left-color:var(--acid);
+}
+.about-signature{
+  margin-top:26px;
+  color:#4f4c56;
+  font:800 8px/1 'Space Grotesk',Inter,sans-serif;
+  letter-spacing:.22em;
+}
+.about-system-main{
+  padding-right:72px;
+}
+.about-quote{
+  margin-top:28px!important;
+  font:700 clamp(32px,3.5vw,48px)/.94 'Space Grotesk',Inter,sans-serif!important;
+  letter-spacing:-2.1px!important;
+  color:#f4f1f5!important;
+}
+.about-quote strong{
+  font-weight:700;
+  color:#fff;
+}
+.about-quote em{
+  font-style:normal;
+  font-weight:600;
+  color:#77737e;
+  text-shadow:none;
+}
+.about-description{
+  margin-top:24px!important;
+  color:#96939d!important;
+  font:500 13px/1.7 'Space Grotesk',Inter,sans-serif!important;
+  letter-spacing:.01em;
+}
+.about-description b{
+  color:#fff;
+  font-weight:700;
+}
+.about-stamp{
+  width:64px;
+  height:64px;
+  border-color:#ff365d66;
+  color:#ff6b84;
+  font:800 8px/.95 'Space Grotesk',Inter,sans-serif;
+  letter-spacing:.12em;
+  box-shadow:0 0 24px #ff365d12;
+}
+@media(max-width:800px){
+  .about-section{
+    padding-top:78px;
+  }
+  .about-title-row{
+    align-items:center;
+    gap:14px;
+  }
+  .about-title-row h2{
+    font-size:45px;
+    line-height:.93;
+    letter-spacing:-2.8px;
+  }
+  .about-mark{
+    font-size:56px;
+    letter-spacing:-5px;
+  }
+  .about-line{
+    margin-top:22px;
+    letter-spacing:.17em;
+  }
+  .about-content{
+    margin-top:32px;
+    gap:14px;
+  }
+  .about-manifesto,.about-system{
+    min-height:0;
+    border-radius:18px;
+    padding:22px;
+  }
+  .about-manifesto>p{
+    margin-top:30px;
+    font-size:26px;
+    line-height:1.1;
+    letter-spacing:-1.1px;
+  }
+  .about-tags{
+    margin-top:20px;
+  }
+  .about-tags span{
+    font-size:7px;
+    padding:8px 9px;
+  }
+  .about-signature{
+    margin-top:22px;
+  }
+  .about-system{
+    gap:15px;
+  }
+  .about-system-main{
+    padding-right:62px;
+  }
+  .about-quote{
+    margin-top:22px!important;
+    font-size:31px!important;
+    letter-spacing:-1.3px!important;
+  }
+  .about-description{
+    margin-top:19px!important;
+    font-size:12px!important;
+  }
+  .about-stamp{
+    width:55px;
+    height:55px;
+    font-size:7px;
+  }
+}
